@@ -41,7 +41,7 @@ class Transaction {
     if (this.type === "regular") {
       return this.inputTotal - this.outputTotal;
     } else {
-      throw `Transaction type ${this.type} does not have fees`
+      throw `У типа транзакции ${this.type} нет комиссия`
     }
   }
 
@@ -50,7 +50,7 @@ class Transaction {
     const outputTotal = this.outputTotal;
 
     if (inputTotal < outputTotal) {
-      throw `Insufficient balance: inputs ${inputTotal} < outputs ${outputTotal}`;
+      throw `Недостаточный баланс: ${inputTotal} < ${outputTotal}`;
     }
   }
 
@@ -98,7 +98,7 @@ class Transaction {
       const outputs: List<Output> = List([{ address, amount: fee }]);
       return new Transaction("fee", List(), outputs);
     } else {
-      throw `No fees for transaction`;
+      throw `Нет комиссии за транзакцию`;
     }
   }
 

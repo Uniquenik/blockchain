@@ -17,7 +17,7 @@ class Wallet {
     if (password === this.password) {
       return this.keyPair.getPrivate("hex");
     } else {
-      throw `Incorrect wallet password`;
+      throw `Некорректный пароль у кошелька`;
     }
   }
 }

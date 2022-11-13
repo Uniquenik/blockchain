@@ -2,11 +2,9 @@
 
 import Peer from "./src/Peer";
 import Message from "./src/Message";
-import MessageType from "./src/MessageType";
 import MessageCreator from "./src/MessageCreator";
 import { List } from "immutable";
 import Block from "./src/Block";
-import Payment from "./src/Payment";
 import Transaction from "./src/Transaction";
 const peer = new Peer();
 const vorpal = require("vorpal")();
@@ -25,13 +23,13 @@ vorpal
   .use(pay)
   .use(balance)
   .use(welcome)
-  .delimiter("coin >")
+  .delimiter("blockchain >")
   .show();
 
 
 // COMMANDS
 function welcome(vorpal) {
-  this.log("Welcome to Coin CLI!");
+  this.log("Blockchain интерпретация");
   vorpal.exec("help");
 }
 
@@ -39,7 +37,7 @@ function connect(vorpal) {
   vorpal
     .command(
       "connect <host> <port>",
-      "Connect to a new peer with <host> and <port>."
+      "Подключиться к новому устройству используя <host> и <port>."
     )
     .alias("c")
     .action((args, callback) => {
@@ -55,7 +53,7 @@ function connect(vorpal) {
 
 function discover(vorpal) {
   vorpal
-    .command("discover", "Discover new peers from your connected peers.")
+    .command("discover", "Поиск новых пиров")
     .alias("d")
     .action((args, callback) => {
       try {
@@ -70,7 +68,7 @@ function discover(vorpal) {
 
 function blockchain(vorpal) {
   vorpal
-    .command("blockchain", "See the current state of the blockchain.")
+    .command("blockchain", "Текущее состояние блокчейна")
     .alias("bc")
     .action((args, callback) => {
       this.log(peer.blockchain.toString());
@@ -80,7 +78,7 @@ function blockchain(vorpal) {
 
 function peers(vorpal) {
   vorpal
-    .command("peers", "Get the list of connected peers.")
+    .command("peers", "Сипсок подключенных устройств")
     .alias("p")
     .action((args, callback) => {
       peer.connectedPeers.forEach(peer => {
@@ -92,7 +90,7 @@ function peers(vorpal) {
 
 function mine(vorpal) {
   vorpal
-    .command("mine [address]", "Mine a new block with rewards going to optional [address].")
+    .command("mine [address]", "Майнинг нового блока, можно добавить адрес [address] для перечисления награды (по умолчанию используется последний).")
     .alias("m")
     .action((args, callback) => {
       try {
@@ -117,12 +115,12 @@ function mine(vorpal) {
 
 function open(vorpal) {
   vorpal
-    .command("open <port>", "Open port <port> to accept incoming connections.")
+    .command("open <port>", "Открыть порт <port> для возможности соединения")
     .alias("o")
     .action((args, callback) => {
       try {
         peer.startServer(args.port);
-        this.log(`Listening to peers on ${args.port}`);
+        this.log(`Прослушивание на порту ${args.port}`);
       } catch (err) {
         this.log(err);
       } finally {
@@ -133,7 +131,7 @@ function open(vorpal) {
 
 function transaction(vorpal) {
   vorpal
-    .command("transactions", "See unconfirmed transactions that can be mined.")
+    .command("transactions", "Список неподтвержденных транзакций")
     .alias("tx")
     .action((args, callback) => {
       this.log(peer.mempool.toString());
@@ -143,21 +141,21 @@ function transaction(vorpal) {
 
 function newWallet(vorpal) {
   vorpal
-    .command("wallet <password>", "Create a new wallet with <password>")
+    .command("wallet <password>", "Создание нового кошелька с паролем <password> (в пароле должны быть буквы)")
     .alias("w")
     .action((args, callback) => {
       args.password = args.password.toString();
       peer.newWallet(args.password);
       const hidePass = args.password.replace(/./g, "*");
-      this.log(`Created new wallet with password ${hidePass}.\n`);
-      this.log(`Address: ${peer.wallet.publicKey}\n`);
+      this.log(`Создан новый кошелек с паролем ${hidePass}.\n`);
+      this.log(`Адрес: ${peer.wallet.publicKey}\n`);
       callback();
     });
 }
 
 function getPublicKey(vorpal) {
   vorpal
-    .command("key", "Get your public key")
+    .command("key", "Получить свой публичный ключ")
     .alias("k")
     .action((args, callback) => {
       try {
@@ -178,7 +176,7 @@ function pay(vorpal) {
   vorpal
     .command(
       "pay <address> <amount> <fee> <password>",
-      "Make a payment to <address> with <amount> and <fee> using wallet <password>"
+      "Совершить платеж на адрес <address> указав количество, комиссию и пароль от кошелька (<amount>, <fee>, <password>)"
     )
     .action((args, callback) => {
       const address = args.address;
@@ -203,7 +201,7 @@ function pay(vorpal) {
 
 function balance(vorpal) {
   vorpal
-    .command("balance [address]", "Balance of optional [address]")
+    .command("balance [address]", "Баланс, можно указать также кошелек параметром [address]")
     .alias("b")
     .action((args, callback) => {
       try {
@@ -221,7 +219,7 @@ function balance(vorpal) {
 // Error Handlers
 function handleTypeError(e) {
   if (e.message.includes("'publicKey'")) {
-    this.log('\nPlease create a wallet. Enter "help wallet" to see usage.\n');
+    this.log('\nНеобходимо создать кошелек.\n');
   } else {
     this.log(e);
   }

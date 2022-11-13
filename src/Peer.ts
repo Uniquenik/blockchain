@@ -1,4 +1,4 @@
-import { List, isImmutable } from "immutable";
+import { List } from "immutable";
 import * as net from "net";
 import * as wrtc from "wrtc";
 import * as Exchange from "peer-exchange";
@@ -6,7 +6,6 @@ import Block from "./Block";
 import Blockchain from "./Blockchain";
 import Node from "./Node";
 import Transaction from "./Transaction";
-import Input from "./Input";
 import Message from "./Message";
 import MessageType from "./MessageType";
 import MessageCreator from "./MessageCreator";
@@ -89,7 +88,7 @@ class Peer extends Node {
         this.mempool.removeTransaction(Transaction.fromJS(message.payload));
         break;
       default:
-        throw `Invalid message type ${message.type} from ${peer}`;
+        throw `Некорректный тип сообщения ${message.type} с ${peer}`;
     }
   }
 

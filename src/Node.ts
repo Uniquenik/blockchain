@@ -1,9 +1,8 @@
-import { List, Set } from "immutable";
+import { List } from "immutable";
 import Blockchain from "./Blockchain";
 import Mempool from "./Mempool";
 import Wallet from "./Wallet";
 import Payment from "./Payment";
-import Peer from "./Peer";
 import Input from "./Input";
 import Output from "./Output";
 import Transaction from "./Transaction";
@@ -73,7 +72,7 @@ class Node {
       inputs = this.signInputs(inputs, password);
       return new Transaction("regular", inputs, outputs);
     } catch (err) {
-      throw `Failed to create transactions: ${err}`;
+      throw `Ошибка при создании транзакции: ${err}`;
     }
   }
 
@@ -85,7 +84,7 @@ class Node {
         return input;
       });
     } catch (err) {
-      throw `Error signing inputs ${inputs}: ${err}`;
+      throw `Ошибка при подписке ${inputs}: ${err}`;
     }
   }
 
@@ -137,7 +136,7 @@ class Node {
       const outputs: List<Output> = List([{ address, amount: totalFee }]);
       return new Transaction("fee", List(), outputs);
     } else {
-     throw "No fees in Transaction.";
+     throw "Нет комиссии в транзакции";
     }
   }
 
